@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 /* google font */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;800&family=VT323&display=swap');
 
@@ -7,24 +11,9 @@
   --error: #e7195a;
 }
 body {
-  background: #f1f1f1;
+  background: #002642;
   margin: 0;
   font-family: "Poppins";
-}
-header {
-  background: #fff;
-}
-header .container {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 10px 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-header a {
-  color: #333;
-  text-decoration: none;
 }
 .pages{
   max-width: 1400px;
@@ -32,13 +21,42 @@ header a {
   margin: 0 auto;
 }
 
-/* homepage */
-.home {
-  display: grid;
-  grid-template-columns: 3fr 1fr;
-  gap: 100px;
+/* Add button */
+.cssbuttons-io-button {
+  display: flex;
+  align-items: center;
+  font-family: inherit;
+  font-weight: 500;
+  font-size: 16px;
+  padding: 0.7em 1.4em 0.7em 1.1em;
+  color: white;
+  background: linear-gradient(0deg, rgba(20,167,62,1) 0%, rgba(102,247,113,1) 100%);
+  border: none;
+  box-shadow: 0 0.7em 1.5em -0.5em #14a73e98;
+  letter-spacing: 0.05em;
+  border-radius: 20em;
+  transition: 0.3s ease, box-shadow 0.3s ease;
 }
-.workout-details {
+
+.cssbuttons-io-button:hover {
+  background: linear-gradient(0deg, rgba(16,134,50,1) 0%, rgba(82,198,90,1) 100%);
+  box-shadow: 0 0.5em 1.5em -0.5em #14a73e98;
+}
+
+.cssbuttons-io-button svg {
+  margin-right: 6px;
+}
+
+.cssbuttons-io-button:hover {
+  box-shadow: 0 0.5em 1.5em -0.5em #14a73e98;
+}
+
+.cssbuttons-io-button:active {
+  box-shadow: 0 0.3em 1em -0.5em #14a73e98;
+}
+
+/* homepage */
+.note-details {
   background: #fff;
   border-radius: 4px;
   margin: 20px auto;
@@ -46,17 +64,17 @@ header a {
   position: relative;
   box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
 }
-.workout-details h4 {
+.note-details h4 {
   margin: 0 0 10px 0;
   font-size: 1.2em;
   color: var(--primary);
 }
-.workout-details p {
+.note-details p {
   margin: 0;
   font-size: 0.9em;
   color: #555;
 }
-.workout-details span {
+.note-details span {
   position: absolute;
   top: 20px;
   right: 20px;
@@ -67,7 +85,7 @@ header a {
   color: #333;
 }
 
-/* new workout form */
+/* new note form */
 label, input {
   display: block;
 }
@@ -120,6 +138,11 @@ nav button {
   font-size: 1em;
 }
 
+nav button:hover {
+  background: var(--primary);
+  color: #fff;
+}
+
 /* auth forms */
 form.signup, form.login {
   max-width: 400px;
@@ -128,3 +151,66 @@ form.signup, form.login {
   background: #fff;
   border-radius: 4px;
 }
+
+/* Modal */
+.modal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+  background-color: #fefefe;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  max-width: 500px;
+  text-align: center;
+  border-radius: 0.75rem;
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* Note rotate animation */
+@keyframes rotateHover {
+  0% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-3deg);
+  }
+  50% {
+    transform: rotate(3deg);
+  }
+  75% {
+    transform: rotate(-3deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+.note-hover-effect:hover {
+  animation: rotateHover 1s ease-in-out;
+}
+

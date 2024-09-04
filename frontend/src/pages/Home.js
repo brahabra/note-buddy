@@ -1,42 +1,103 @@
-import { useEffect }from 'react'
-import { useWorkoutsContext } from "../hooks/useWorkoutsContext"
-import { useAuthContext } from "../hooks/useAuthContext"
+import { useEffect, useState } from "react";
+import { useNotesContext } from "../hooks/useNotesContext";
+import { useAuthContext } from "../hooks/useAuthContext";
+import { useSnackbar } from 'notistack';
 
 // components
-import WorkoutDetails from '../components/WorkoutDetails'
-import WorkoutForm from '../components/WorkoutForm'
+import AddNoteButton from "../components/AddNoteButton";
+import NoteModal from "../components/NoteModal";
+import SearchBar from "../components/SearchBar";
+import NotesList from "../components/NotesList";
 
 const Home = () => {
-  const {workouts, dispatch} = useWorkoutsContext()
-  const {user} = useAuthContext()
+  const { notes, dispatch } = useNotesContext();
+  const { user } = useAuthContext();
+  const { enqueueSnackbar } = useSnackbar();
+  const [showModal, setShowModal] = useState(false);
+  const [currentNote, setCurrentNote] = useState(null);
+  const [filteredNotes, setFilteredNotes] = useState([]);
 
   useEffect(() => {
-    const fetchWorkouts = async () => {
-      const response = await fetch('/api/workouts', {
-        headers: {'Authorization': `Bearer ${user.token}`},
-      })
-      const json = await response.json()
+    const fetchNotes = async () => {
+      if (!user) return;
 
-      if (response.ok) {
-        dispatch({type: 'SET_WORKOUTS', payload: json})
+      try {
+        const response = await fetch("/api/notes", {
+          headers: { Authorization: `Bearer ${user.token}` },
+        });
+        const json = await response.json();
+
+        if (response.ok) {
+          dispatch({ type: "SET_NOTES", payload: json });
+          setFilteredNotes(json); // Initialize filtered notes
+        } else {
+          enqueueSnackbar('Failed to fetch notes', { variant: 'error' });
+        }
+      } catch (error) {
+        enqueueSnackbar('An error occurred while fetching notes', { variant: 'error' });
       }
-    }
+    };
 
-    if (user) {
-      fetchWorkouts()
+    fetchNotes();
+  }, [dispatch, user, enqueueSnackbar]);
+
+  useEffect(() => {
+    if (notes) {
+      setFilteredNotes(notes);
     }
-  }, [dispatch, user])
+  }, [notes]);
+
+  const handleOpenModal = (note) => {
+    setCurrentNote(note);
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setCurrentNote(null);
+  };
+
+  const handleSearch = (query) => {
+    if (!query) {
+      setFilteredNotes(notes);
+    } else {
+      const lowercasedQuery = query.toLowerCase();
+      const filtered = notes.filter(
+        (note) =>
+          note.title.toLowerCase().includes(lowercasedQuery) ||
+          note.content.toLowerCase().includes(lowercasedQuery)
+      );
+      setFilteredNotes(filtered);
+    }
+  };
+
+  const handleNoteAction = (message) => {
+    enqueueSnackbar(message, { variant: 'success' });
+  };
 
   return (
-    <div className="home">
-      <div className="workouts">
-        {workouts && workouts.map((workout) => (
-          <WorkoutDetails key={workout._id} workout={workout} />
-        ))}
-      </div>
-      <WorkoutForm />
+    <div>
+      <p className="note-hover-effect flex justify-center mb-14 text-5xl text-white">
+        Note Buddy
+      </p>
+      <SearchBar onSearch={handleSearch} />
+      <AddNoteButton onClick={() => setShowModal(true)} />
+      {notes && notes.length > 0 ? (
+        filteredNotes && filteredNotes.length > 0 ? (
+          <NotesList filteredNotes={filteredNotes} handleOpenModal={handleOpenModal} />
+        ) : (
+          <p className="flex justify-center mt-28 text-2xl text-white">
+            No notes found!
+          </p>
+        )
+      ) : (
+        <p className="flex justify-center mt-28 text-2xl text-white">
+          No notes added yet!
+        </p>
+      )}
+      {showModal && <NoteModal onClose={handleCloseModal} note={currentNote} onAction={handleNoteAction} />}
     </div>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;
