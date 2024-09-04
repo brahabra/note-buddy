@@ -1,14 +1,12 @@
-const express = require('express')
+const express = require('express');
+const { signupUser, loginUser, updateProfilePicture } = require('../controllers/userController');
+const { upload } = require('../middleware/upload');
+const requireAuth = require('../middleware/requireAuth');
 
-// controller functions
-const { loginUser, signupUser } = require('../controllers/userController')
+const router = express.Router();
 
-const router = express.Router()
+router.post('/signup', signupUser);
+router.post('/login', loginUser);
+router.post('/profile-picture', requireAuth, upload.single('profilePicture'), updateProfilePicture);
 
-// login route
-router.post('/login', loginUser)
-
-// signup route
-router.post('/signup', signupUser)
-
-module.exports = router
+module.exports = router;

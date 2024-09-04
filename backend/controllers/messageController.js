@@ -1,33 +1,36 @@
 const Message = require('../models/messageModel');
+const User = require('../models/userModel');
 
-// Get all messages
+// Fetch all messages
 const getMessages = async (req, res) => {
   try {
-    const messages = await Message.find().sort({ createdAt: -1 }).exec();
+    const messages = await Message.find().populate('user', 'username profilePicture').sort({ createdAt: -1 });
     res.status(200).json(messages);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(400).json({ error: error.message });
   }
 };
 
 // Create a new message
 const createMessage = async (req, res) => {
-  const { content, username } = req.body;
-
-  if (!content) {
-    return res.status(400).json({ error: 'A message cannot be empty' });
-  }
+  const { content } = req.body;
+  const user = req.user._id; // Extract user ID from authenticated user
 
   try {
-    const user_id = req.user._id;
-    console.log('Received message data:', { content, user_id, username }); // Log the received data
-
-    const message = await Message.create({ content, user_id, username });
-    res.status(201).json(message);
+    const message = await createMessageHelper({ content, user });
+    res.status(200).json(message);
   } catch (error) {
-    console.error('Error creating message:', error); // Log the error
+    console.log('Error creating message:', error); // Debugging statement
     res.status(400).json({ error: error.message });
   }
 };
 
-module.exports = { getMessages, createMessage };
+// Helper function to create a message
+const createMessageHelper = async ({ content, user }) => {
+  const messageData = { content, user }; // Ensure user is an ObjectId
+  let message = await Message.create(messageData);
+  message = await message.populate('user', 'username profilePicture');
+  return message;
+};
+
+module.exports = { getMessages, createMessage, createMessageHelper };

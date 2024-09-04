@@ -77,9 +77,11 @@ const Home = () => {
 
   return (
     <div>
-      <p className="note-hover-effect flex justify-center mb-14 text-5xl text-white">
-        Note Buddy
-      </p>
+      <div className="flex justify-center">
+        <p className="note-hover-effect flex justify-center mt-8 mb-14 text-5xl text-white">
+          Note Buddy
+        </p>
+      </div>
       <SearchBar onSearch={handleSearch} />
       <AddNoteButton onClick={() => setShowModal(true)} />
       {notes && notes.length > 0 ? (

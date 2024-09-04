@@ -16,38 +16,45 @@ const Navbar = () => {
   return (
     <header className="bg-gray-800 text-white">
       <div className="max-w-[1400px] mx-auto px-5 py-4 flex items-center justify-between">
-        <div className="flex items-center space-x-6">
-          <Link to="/" className="flex items-center space-x-2 hover:text-yellow-300">
-            <HomeIcon />
-            <span>Home</span>
-          </Link>
-          <Link to="/chat" className="flex items-center space-x-2 hover:text-yellow-300">
-            <ChatIcon />
-            <span>Chat</span>
-          </Link>
-          <Link to="/profile" className="flex items-center space-x-2 hover:text-yellow-300">
-            <AccountCircleIcon />
-            <span>Profile</span>
-          </Link>
-        </div>
-        <nav>
-          {user ? (
-            <div className="flex items-center space-x-4">
+        {user ? (
+          <>
+            <div className="flex items-center space-x-6">
+              <Link to="/" className="flex items-center space-x-2 hover:text-yellow-300">
+                <HomeIcon />
+                <span>Home</span>
+              </Link>
+              <Link to="/chat" className="flex items-center space-x-2 hover:text-yellow-300">
+                <ChatIcon />
+                <span>Chat</span>
+              </Link>
+              <Link to="/profile" className="flex items-center space-x-2 hover:text-yellow-300">
+                <AccountCircleIcon />
+                <span>Profile</span>
+              </Link>
+            </div>
+            <nav className="flex items-center space-x-4">
               <button onClick={handleClick}>
                 Log out
               </button>
+            </nav>
+          </>
+        ) : (
+          <>
+            <div className="flex items-center space-x-6">
+              <p className="note-hover-effect text-2xl text-white">
+                Note Buddy
+              </p>
             </div>
-          ) : (
-            <div className="flex items-center space-x-4">
-              <Link to="/login" className="bg-blue-500 px-3 py-1 rounded">
+            <nav className="flex justify-end flex-grow items-center space-x-4">
+              <Link to="/login" className="bg-blue-500 hover:bg-blue-600 px-3 py-1 rounded">
                 Login
               </Link>
-              <Link to="/signup" className="bg-green-500 px-3 py-1 rounded">
+              <Link to="/signup" className="bg-green-500 hover:bg-green-600 px-3 py-1 rounded">
                 Signup
               </Link>
-            </div>
-          )}
-        </nav>
+            </nav>
+          </>
+        )}
       </div>
     </header>
   );
