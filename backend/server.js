@@ -43,7 +43,7 @@ app.use('/api/messages', messageRoutes);
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
     // listen for requests
-    server.listen(process.env.PORT, () => {
+    server.listen(process.env.PORT || 4000, () => {
       console.log('connected to db & listening on port', process.env.PORT);
     });
   })
