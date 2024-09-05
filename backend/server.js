@@ -17,17 +17,20 @@ const app = express();
 // create HTTP server
 const server = http.createServer(app);
 
-// initialize Socket.io
+// CORS setup for both Express and Socket.io
+const corsOptions = {
+  origin: process.env.FRONTEND_URL, // Ensure this is set correctly
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true
+};
+app.use(cors(corsOptions));
+
 const io = socketIo(server, {
-  cors: {
-    origin: process.env.FRONTEND_URL,
-    methods: ['GET', 'POST']
-  }
+  cors: corsOptions
 });
 
 // middleware
 app.use(express.json());
-app.use(cors()); // Use CORS middleware
 
 app.use((req, res, next) => {
   console.log(req.path, req.method);
