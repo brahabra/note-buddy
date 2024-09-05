@@ -6,7 +6,7 @@ import { useSnackbar } from 'notistack';
 import { formatDistanceToNow } from 'date-fns';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
-const socket = io('http://localhost:4000');
+const socket = io(process.env.BACKEND_URL);
 
 const Chat = () => {
   const { user } = useAuthContext();
