@@ -1,39 +1,45 @@
-const Note = require('../models/noteModel')
-const mongoose = require('mongoose')
+const Note = require('../models/noteModel');
+const mongoose = require('mongoose');
 
-// get all notes
+// Get all notes
 const getNotes = async (req, res) => {
-  const user_id = req.user._id
+  const user_id = req.user._id;
 
-  const notes = await Note.find({user_id}).sort({updatedAt: -1})
+  try {
+    const notes = await Note.find({ user_id }).sort({ updatedAt: -1 });
+    res.status(200).json(notes);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
 
-  res.status(200).json(notes)
-}
-
-// get a single note
+// Get a single note
 const getNote = async (req, res) => {
-  const { id } = req.params
+  const { id } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(404).json({error: 'No such note'})
+    return res.status(404).json({ error: 'No such note' });
   }
 
-  const note = await Note.findById(id)
+  try {
+    const note = await Note.findOne({ _id: id, user_id: req.user._id });
 
-  if (!note) {
-    return res.status(404).json({error: 'No such note'})
+    if (!note) {
+      return res.status(404).json({ error: 'No such note' });
+    }
+
+    res.status(200).json(note);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
   }
-  
-  res.status(200).json(note)
-}
+};
 
-
-// create new note
+// Create new note
 const createNote = async (req, res) => {
   const { title, content } = req.body;
 
   if (!title && !content) {
-    return res.status(400).json({ error: 'A note cannot be empty' })
+    return res.status(400).json({ error: 'A note cannot be empty' });
   }
 
   try {
@@ -45,24 +51,28 @@ const createNote = async (req, res) => {
   }
 };
 
-// delete a note
+// Delete a note
 const deleteNote = async (req, res) => {
-  const { id } = req.params
+  const { id } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(404).json({error: 'No such note'})
+    return res.status(404).json({ error: 'No such note' });
   }
 
-  const note = await Note.findOneAndDelete({_id: id})
+  try {
+    const note = await Note.findOneAndDelete({ _id: id, user_id: req.user._id });
 
-  if (!note) {
-    return res.status(400).json({error: 'No such note'})
+    if (!note) {
+      return res.status(400).json({ error: 'No such note' });
+    }
+
+    res.status(200).json(note);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
   }
+};
 
-  res.status(200).json(note)
-}
-
-// update a note
+// Update a note
 const updateNote = async (req, res) => {
   const { id } = req.params;
   const { title, content, pinned } = req.body;
@@ -75,19 +85,22 @@ const updateNote = async (req, res) => {
     return res.status(400).json({ error: 'A note cannot be empty' });
   }
 
-  const note = await Note.findOneAndUpdate(
-    { _id: id },
-    { ...req.body, updatedAt: new Date() }, // Update the updatedAt field
-    { new: true } // Return the updated document
-  );
+  try {
+    const note = await Note.findOneAndUpdate(
+      { _id: id, user_id: req.user._id },
+      { ...req.body, updatedAt: new Date() }, // Update the updatedAt field
+      { new: true } // Return the updated document
+    );
 
-  if (!note) {
-    return res.status(400).json({ error: 'No such note' });
+    if (!note) {
+      return res.status(400).json({ error: 'No such note' });
+    }
+
+    res.status(200).json(note);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
   }
-
-  res.status(200).json(note);
 };
-
 
 module.exports = {
   getNotes,
@@ -95,4 +108,4 @@ module.exports = {
   createNote,
   deleteNote,
   updateNote
-}
+};

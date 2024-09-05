@@ -4,7 +4,7 @@ const User = require('../models/userModel');
 // Fetch all messages
 const getMessages = async (req, res) => {
   try {
-    const messages = await Message.find().populate('user', 'username profilePicture').sort({ createdAt: -1 });
+    const messages = await Message.find().populate('user', 'username').sort({ createdAt: -1 });
     res.status(200).json(messages);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -29,7 +29,7 @@ const createMessage = async (req, res) => {
 const createMessageHelper = async ({ content, user }) => {
   const messageData = { content, user }; // Ensure user is an ObjectId
   let message = await Message.create(messageData);
-  message = await message.populate('user', 'username profilePicture');
+  message = await message.populate('user', 'username');
   return message;
 };
 

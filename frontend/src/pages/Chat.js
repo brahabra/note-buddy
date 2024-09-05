@@ -5,7 +5,6 @@ import { useMessagesContext } from '../hooks/useMessagesContext';
 import { useSnackbar } from 'notistack';
 import { formatDistanceToNow } from 'date-fns';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 const socket = io('http://localhost:4000');
 
@@ -93,8 +92,7 @@ const Chat = () => {
       content: message,
       user: {
         _id: user._id,
-        username: user.username,
-        profilePicture: user.profilePicture
+        username: user.username
       }
     };
 
@@ -139,30 +137,15 @@ const Chat = () => {
         <div ref={messagesEndRef} />
         {messages.map((msg, index) => {
           const isOwnMessage = user._id === msg.user?._id;
-          const wrapMessages = !isOwnMessage && index > 0 && msg.user && messages[index - 1].user && messages[index - 1].user._id === msg.user._id;
-          const showProfileInfo = index === 0 || !wrapMessages;
-          const showUsername = !wrapMessages;
+          const showUsername = index === messages.length - 1 || (msg.user && messages[index + 1]?.user && messages[index + 1].user._id !== msg.user._id);
 
           return (
             <div key={index} className={`flex items-start ${isOwnMessage ? 'justify-end' : 'justify-start'}`}>
-              {!isOwnMessage && (
-                <div className={`flex items-center justify-center ${wrapMessages ? "h-28" : ""}`}>
-                  {showProfileInfo && (
-                    msg.user?.profilePicture ? (
-                      <img src={`/${msg.user.profilePicture}`} alt="Profile" className="w-10 h-10 rounded-full object-cover" />
-                    ) : (
-                      <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center">
-                        <AccountCircleIcon />
-                      </div>
-                    )
-                  )}
-                </div>
-              )}
-              <div className="flex flex-col ml-3">
+              <div className="flex flex-col max-w-full">
                 {!isOwnMessage && showUsername && (
                   <h4 className="ml-3.5 text-sm text-gray-300">{msg.user?.username}</h4>
                 )}
-                <div className={`my-1 rounded-2xl ${isOwnMessage ? 'bg-emerald-500 text-white' : 'bg-white text-[#1aac83]'} px-5 pt-3 pb-2 shadow-sm cursor-pointer`}>
+                <div className={`my-1 rounded-2xl ${isOwnMessage ? 'bg-emerald-500 text-white' : 'bg-white text-[#1aac83]'} px-5 pt-3 pb-2 shadow-sm cursor-pointer break-words max-w-full`}>
                   <p>{msg.content}</p>
                   <p className="text-xs text-gray-500">
                     {formatDistanceToNow(new Date(msg.createdAt), { addSuffix: true })}
@@ -181,15 +164,17 @@ const Chat = () => {
           <ArrowDownwardIcon />
         </button>
       )}
-      <div className="fixed bottom-0 left-0 right-0 flex items-center p-4">
-        <input
-          type="text"
-          placeholder="Type a message..."
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          onKeyDown={handleKeyDown}
-          className="flex-1 p-2 mr-2 rounded-2xl"
-        />
+      <div className='fixed bottom-0 left-0 right-0 p-4 '>
+        <div className="flex justify-center items-center max-w-[1400px]  mx-auto">
+          <input
+            type="text"
+            placeholder="Type a message..."
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            onKeyDown={handleKeyDown}
+            className="flex-1 p-2 mr-2 rounded-2xl"
+          />
+        </div>
       </div>
     </div>
   );

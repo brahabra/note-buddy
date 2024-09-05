@@ -34,9 +34,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// Serve the uploads directory as static
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
 // routes
 app.use('/api/notes', noteRoutes);
 app.use('/api/user', userRoutes);

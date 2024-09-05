@@ -6,7 +6,7 @@ const handleSocketConnection = (io) => {
     console.log('New client connected');
 
     // Send existing messages to the client
-    const messages = await Message.find().sort({ createdAt: -1 }).limit(50).populate('user', 'username profilePicture').exec();
+    const messages = await Message.find().sort({ createdAt: -1 }).limit(50).populate('user', 'username').exec();
     socket.emit('loadMessages', messages.reverse());
 
     socket.on('sendMessage', async ({ content, user }) => {
