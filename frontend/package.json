@@ -1,5 +1,5 @@
 {
-  "proxy": "http://localhost:10000",
+  "proxy": "https://note-buddy.onrender.com/",
   "name": "frontend",
   "version": "0.1.0",
   "private": true,
