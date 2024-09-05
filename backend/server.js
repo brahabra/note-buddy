@@ -22,7 +22,7 @@ const server = http.createServer(app);
 // CORS setup for both Express and Socket.io
 const corsOptions = {
   origin: process.env.FRONTEND_URL, // Ensure this is set correctly
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  methods: ['GET', 'POST', 'PATCH', 'DELETE'],
   credentials: true
 };
 app.use(cors(corsOptions));

@@ -36,7 +36,7 @@ const NoteModal = ({ onClose, note }) => {
     }
 
     const method = note ? 'PATCH' : 'POST';
-    const url = note ? `/api/notes/${note._id}` : '/api/notes';
+    const url = note ? `${process.env.REACT_APP_BACKEND_URL}/api/notes/${note._id}` : `${process.env.REACT_APP_BACKEND_URL}/api/notes`;
 
     const response = await fetch(url, {
       method,
@@ -59,7 +59,7 @@ const NoteModal = ({ onClose, note }) => {
       dispatch({ type: note ? 'UPDATE_NOTE' : 'CREATE_NOTE', payload: json });
 
       const fetchNotes = async () => {
-        const response = await fetch('/api/notes', {
+        const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/notes`, {
           headers: { 'Authorization': `Bearer ${user.token}` },
         });
         const notes = await response.json();

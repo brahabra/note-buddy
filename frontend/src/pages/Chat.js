@@ -6,7 +6,7 @@ import { useSnackbar } from 'notistack';
 import { formatDistanceToNow } from 'date-fns';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
-const socket = io(process.env.BACKEND_URL);
+const socket = io(process.env.REACT_APP_BACKEND_URL);
 
 const Chat = () => {
   const { user } = useAuthContext();
@@ -22,7 +22,7 @@ const Chat = () => {
       if (!user) return;
 
       try {
-        const response = await fetch('/api/messages', {
+        const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/messages`, {
           headers: { 'Authorization': `Bearer ${user.token}` },
         });
         const data = await response.json();
@@ -100,7 +100,7 @@ const Chat = () => {
       socket.emit('sendMessage', socketMessageData);
       setMessage('');
       try {
-        const response = await fetch('/api/messages', {
+        const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/messages`, {
           headers: { 'Authorization': `Bearer ${user.token}` },
         });
         const data = await response.json();

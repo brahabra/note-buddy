@@ -22,7 +22,7 @@ const Home = () => {
       if (!user) return;
 
       try {
-        const response = await fetch("/api/notes", {
+        const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/notes`, {
           headers: { Authorization: `Bearer ${user.token}` },
         });
         const json = await response.json();

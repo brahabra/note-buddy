@@ -20,7 +20,7 @@ const NoteDetails = ({ note, onOpenModal }) => {
       return;
     }
 
-    const response = await fetch('/api/notes/' + note._id, {
+    const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/notes/${note._id}`, {
       method: 'DELETE',
       headers: {
         'Authorization': `Bearer ${user.token}`
@@ -46,7 +46,7 @@ const NoteDetails = ({ note, onOpenModal }) => {
       return;
     }
 
-    const response = await fetch('/api/notes/' + note._id, {
+    const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/notes/${note._id}`, {
       method: 'PATCH',
       body: JSON.stringify({ pinned: !note.pinned }),
       headers: {
