@@ -11,6 +11,8 @@ const cors = require('cors');
 const path = require('path');
 const { handleSocketConnection } = require('./controllers/socketController'); // Import the socket controller
 
+mongoose.set('debug', true);
+
 // express app
 const app = express();
 
