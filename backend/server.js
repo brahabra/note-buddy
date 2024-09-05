@@ -8,7 +8,6 @@ const messageRoutes = require('./routes/message'); // Import the message routes
 const http = require('http');
 const socketIo = require('socket.io');
 const cors = require('cors');
-const path = require('path');
 const { handleSocketConnection } = require('./controllers/socketController'); // Import the socket controller
 
 // express app
@@ -33,9 +32,6 @@ app.use((req, res, next) => {
   console.log(req.path, req.method);
   next();
 });
-
-// Serve the uploads directory as static
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // routes
 app.use('/api/notes', noteRoutes);

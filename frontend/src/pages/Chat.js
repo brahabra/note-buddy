@@ -99,6 +99,7 @@ const Chat = () => {
     };
 
     try {
+      console.log('Sending message:', socketMessageData); // Debugging statement
       socket.emit('sendMessage', socketMessageData);
       setMessage('');
       try {
@@ -149,7 +150,7 @@ const Chat = () => {
                 <div className={`flex items-center justify-center ${wrapMessages ? "h-28" : ""}`}>
                   {showProfileInfo && (
                     msg.user?.profilePicture ? (
-                      <img src={`/${msg.user.profilePicture}`} alt="Profile" className="w-10 h-10 rounded-full object-cover" />
+                      <img src={`data:image/jpeg;base64,${msg.user.profilePicture}`} alt="Profile" className="w-10 h-10 rounded-full object-cover" />
                     ) : (
                       <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center">
                         <AccountCircleIcon />

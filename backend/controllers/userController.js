@@ -1,7 +1,5 @@
 const User = require('../models/userModel');
 const jwt = require('jsonwebtoken');
-const path = require('path');
-const { deleteOldProfilePicture } = require('../middleware/upload');
 
 const createToken = (_id, username) => {
   return jwt.sign({ _id, username }, process.env.SECRET, { expiresIn: '3d' });
@@ -22,7 +20,7 @@ const loginUser = async (req, res) => {
       email: user.email,
       username: user.username,
       createdAt: user.createdAt,
-      profilePicture: user.profilePicture,
+      profilePicture: user.profilePicture ? user.profilePicture.toString('base64') : null,
       token
     });
   } catch (error) {
@@ -45,7 +43,7 @@ const signupUser = async (req, res) => {
       email: user.email,
       username: user.username,
       createdAt: user.createdAt,
-      profilePicture: user.profilePicture,
+      profilePicture: user.profilePicture ? user.profilePicture.toString('base64') : null,
       token
     });
   } catch (error) {
@@ -56,7 +54,7 @@ const signupUser = async (req, res) => {
 // update profile picture
 const updateProfilePicture = async (req, res) => {
   const user_id = req.user._id;
-  const profilePicture = req.file ? req.file.path : '';
+  const profilePicture = req.file ? req.file.buffer.toString('base64') : null;
 
   try {
     const user = await User.findById(user_id);
@@ -65,14 +63,9 @@ const updateProfilePicture = async (req, res) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    // Delete the old profile picture if it exists
-    if (user.profilePicture) {
-      const oldProfilePicturePath = path.join(__dirname, '..', user.profilePicture);
-      deleteOldProfilePicture(oldProfilePicturePath);
-    }
-
     // Update the user's profile picture
     user.profilePicture = profilePicture;
+    console.log('profilePicture:', profilePicture);
     await user.save();
 
     res.status(200).json({
@@ -80,7 +73,7 @@ const updateProfilePicture = async (req, res) => {
       email: user.email,
       username: user.username,
       createdAt: user.createdAt,
-      profilePicture: user.profilePicture,
+      profilePicture: user.profilePicture ? user.profilePicture.toString('base64') : null,
       token: createToken(user._id, user.username)
     });
   } catch (error) {

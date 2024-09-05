@@ -7,7 +7,7 @@ import { useSnackbar } from 'notistack';
 const Profile = () => {
   const { user, dispatch } = useAuthContext();
   const [profilePicture, setProfilePicture] = useState(null);
-  const [profilePictureUrl, setProfilePictureUrl] = useState(user?.profilePicture);
+  const [profilePictureUrl, setProfilePictureUrl] = useState(user?.profilePicture ? `data:image/jpeg;base64,${user.profilePicture}` : null);
   const [isSaveButtonEnabled, setIsSaveButtonEnabled] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
 
@@ -58,7 +58,8 @@ const Profile = () => {
 
       const data = await response.json();
       dispatch({ type: 'LOGIN', payload: data });
-      setProfilePictureUrl(data.profilePicture); // Update the profile picture URL
+      setProfilePictureUrl(`data:image/jpeg;base64,${data.profilePicture}`); // Update the profile picture URL
+      console.log("hei: ", profilePictureUrl)
       setIsSaveButtonEnabled(false); // Disable the save button after saving
       enqueueSnackbar('Profile picture updated successfully', { variant: 'success' });
     } catch (error) {

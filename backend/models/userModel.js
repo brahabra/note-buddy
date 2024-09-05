@@ -20,8 +20,8 @@ const userSchema = new Schema({
     required: true
   },
   profilePicture: {
-    type: String,
-    default: ''
+    type: Buffer,
+    default: null
   }
 }, { timestamps: true });
 

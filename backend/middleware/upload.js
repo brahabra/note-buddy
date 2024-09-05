@@ -1,16 +1,7 @@
-// middleware/upload.js
 const multer = require('multer');
 const path = require('path');
-const fs = require('fs');
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/');
-  },
-  filename: (req, file, cb) => {
-    cb(null, `${Date.now()}-${file.originalname}`);
-  }
-});
+const storage = multer.memoryStorage(); // Store file in memory
 
 const upload = multer({
   storage,
@@ -28,14 +19,4 @@ const upload = multer({
   }
 });
 
-const deleteOldProfilePicture = (filePath) => {
-  fs.unlink(filePath, (err) => {
-    if (err) {
-      console.error(`Error deleting old profile picture: ${err.message}`);
-    } else {
-      console.log(`Successfully deleted old profile picture: ${filePath}`);
-    }
-  });
-};
-
-module.exports = { upload, deleteOldProfilePicture };
+module.exports = { upload };
