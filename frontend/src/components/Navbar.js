@@ -18,7 +18,7 @@ const Navbar = () => {
       <div className="max-w-[1400px] mx-auto px-5 py-4 flex items-center justify-between">
         {user ? (
           <>
-            <div className="flex items-center space-x-6">
+            <div className="flex items-center space-x-3 xs:space-x-6">
               <Link to="/" className="flex items-center space-x-2 hover:text-yellow-300">
                 <HomeIcon />
                 <span>Home</span>
