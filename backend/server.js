@@ -11,8 +11,6 @@ const cors = require('cors');
 const path = require('path');
 const { handleSocketConnection } = require('./controllers/socketController'); // Import the socket controller
 
-mongoose.set('debug', true);
-
 // express app
 const app = express();
 
@@ -21,7 +19,7 @@ const server = http.createServer(app);
 
 // CORS setup for both Express and Socket.io
 const corsOptions = {
-  origin: process.env.FRONTEND_URL, // Ensure this is set correctly
+  origin: [process.env.FRONTEND_URL, 'http://localhost:3000'], // Ensure this is set correctly
   methods: ['GET', 'POST', 'PATCH', 'DELETE'],
   credentials: true
 };
