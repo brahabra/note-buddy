@@ -133,7 +133,7 @@ const Chat = () => {
 
   return (
     <div className="flex flex-col h-full">
-      <div ref={chatContainerRef} className="overflow-y-auto flex flex-col-reverse h-[calc(100vh-12rem)]" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+      <div ref={chatContainerRef} className="overflow-y-auto flex flex-col-reverse h-[calc(100vh-12rem)] xs:pb-0 pb-16" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
         <div ref={messagesEndRef} />
         {messages.map((msg, index) => {
           const isOwnMessage = user._id === msg.user?._id;
