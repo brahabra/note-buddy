@@ -1,5 +1,5 @@
 const Message = require('../models/messageModel');
-const { createMessageHelper } = require('./messageController');
+const { createMessageHelper, toggleLikeMessage } = require('./messageController');
 
 const handleSocketConnection = (io) => {
   io.on('connection', async (socket) => {
@@ -15,6 +15,15 @@ const handleSocketConnection = (io) => {
         io.emit('receiveMessage', message);
       } catch (error) {
         console.log('Error creating message:', error); // Debugging statement
+      }
+    });
+
+    socket.on('likeMessage', async ({ messageId, userId }) => {
+      try {
+        const message = await toggleLikeMessage(messageId, userId);
+        io.emit('updateMessage', message);
+      } catch (error) {
+        console.log('Error liking message:', error); // Debugging statement
       }
     });
 

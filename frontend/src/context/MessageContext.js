@@ -12,6 +12,12 @@ export const messagesReducer = (state, action) => {
       return {
         messages: [action.payload, ...state.messages]
       };
+    case 'UPDATE_MESSAGE':
+      return {
+        messages: state.messages.map((message) =>
+          message._id === action.payload._id ? { ...message, likes: action.payload.likes } : message
+        )
+      };
     default:
       return state;
   }

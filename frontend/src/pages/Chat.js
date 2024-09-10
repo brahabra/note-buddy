@@ -14,6 +14,7 @@ const Chat = () => {
   const { enqueueSnackbar } = useSnackbar();
   const [message, setMessage] = useState('');
   const [showScrollButton, setShowScrollButton] = useState(false);
+  const [isNewMessage, setIsNewMessage] = useState(false);
   const messagesEndRef = useRef(null);
   const chatContainerRef = useRef(null);
 
@@ -41,18 +42,26 @@ const Chat = () => {
 
     socket.on('receiveMessage', (message) => {
       dispatch({ type: 'CREATE_MESSAGE', payload: message });
+      setIsNewMessage(true);
+    });
+
+    socket.on('updateMessage', (updatedMessage) => {
+      dispatch({ type: 'UPDATE_MESSAGE', payload: updatedMessage });
     });
 
     return () => {
       socket.off('receiveMessage');
+      socket.off('updateMessage');
     };
   }, [dispatch, user, enqueueSnackbar]);
 
+  // Scroll to the bottom when a new message is received
   useEffect(() => {
-    if (messagesEndRef.current) {
+    if (isNewMessage && messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+      setIsNewMessage(false);
     }
-  }, [messages]);
+  }, [messages, isNewMessage]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -119,6 +128,21 @@ const Chat = () => {
     }
   };
 
+  const likeMessageOnDoubleTap = async (messageId) => {
+    socket.emit('likeMessage', { messageId, userId: user._id });
+  };
+
+  const detectDoubleTap  = (() => {
+    let lastTap = 0;
+    return (messageId) => {
+      const now = Date.now();
+      if (now - lastTap < 300) {
+        likeMessageOnDoubleTap(messageId);
+      }
+      lastTap = now;
+    };
+  })();
+
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
       sendMessage();
@@ -135,7 +159,7 @@ const Chat = () => {
     <div className="flex flex-col h-full">
       <div ref={chatContainerRef} className="overflow-y-auto flex flex-col-reverse h-[calc(100vh-12rem)]" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
         <div ref={messagesEndRef} />
-        {messages.map((msg, index) => {
+        {Array.isArray(messages) && messages.map((msg, index) => {
           const isOwnMessage = user._id === msg.user?._id;
           const showUsername = index === messages.length - 1 || (msg.user && messages[index + 1]?.user && messages[index + 1].user._id !== msg.user._id);
 
@@ -145,11 +169,16 @@ const Chat = () => {
                 {!isOwnMessage && showUsername && (
                   <h4 className="ml-3.5 text-sm text-gray-300">{msg.user?.username}</h4>
                 )}
-                <div className={`my-1 rounded-2xl ${isOwnMessage ? 'bg-emerald-500 text-white' : 'bg-white text-[#1aac83]'} px-5 pt-3 pb-2 shadow-sm cursor-pointer break-words max-w-full`}>
+                <div onClick={() => detectDoubleTap(msg._id)} className={`my-1 rounded-2xl ${isOwnMessage ? 'bg-emerald-500 text-white' : 'bg-white text-[#1aac83]'} px-5 pt-3 pb-2 shadow-sm cursor-pointer break-words max-w-full`}>
                   <p>{msg.content}</p>
                   <p className="text-xs text-gray-500">
                     {formatDistanceToNow(new Date(msg.createdAt), { addSuffix: true })}
                   </p>
+                  {msg.likes && msg.likes.length > 0 && (
+                    <div className='flex justify-end mt-2'>
+                      <p className="text-xs text-gray-500">❤️ {msg.likes.length === 1 ? '' : msg.likes.length}</p>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

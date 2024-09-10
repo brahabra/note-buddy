@@ -1,5 +1,4 @@
 const Message = require('../models/messageModel');
-const User = require('../models/userModel');
 
 // Fetch all messages
 const getMessages = async (req, res) => {
@@ -20,7 +19,6 @@ const createMessage = async (req, res) => {
     const message = await createMessageHelper({ content, user });
     res.status(200).json(message);
   } catch (error) {
-    console.log('Error creating message:', error); // Debugging statement
     res.status(400).json({ error: error.message });
   }
 };
@@ -33,4 +31,42 @@ const createMessageHelper = async ({ content, user }) => {
   return message;
 };
 
-module.exports = { getMessages, createMessage, createMessageHelper };
+const toggleLikeMessage = async (messageId, userId) => {
+  const message = await Message.findById(messageId);
+
+  if (!message) {
+    throw new Error('Message not found');
+  }
+
+  const hasLiked = message.likes.includes(userId);
+
+  if (hasLiked) {
+    // If already liked, remove the like
+    message.likes.pull(userId);
+  } else {
+    // If not liked, add the like
+    message.likes.push(userId);
+  }
+
+  await message.save();
+
+  // Populate the likes field with the username
+  const populatedMessage = await message.populate('likes', 'username');
+
+  return populatedMessage;
+};
+
+const likeMessage = async (req, res) => {
+  const { id } = req.params;  // Extracting message ID from URL parameters
+  const user_id = req.user._id;
+
+  try {
+    const populatedMessage = await toggleLikeMessage(id, user_id);
+    res.status(200).json(populatedMessage);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+
+module.exports = { getMessages, createMessage, createMessageHelper, likeMessage, toggleLikeMessage };

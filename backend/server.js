@@ -8,7 +8,6 @@ const messageRoutes = require('./routes/message'); // Import the message routes
 const http = require('http');
 const socketIo = require('socket.io');
 const cors = require('cors');
-const path = require('path');
 const { handleSocketConnection } = require('./controllers/socketController'); // Import the socket controller
 
 // express app
