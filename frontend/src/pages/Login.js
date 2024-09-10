@@ -31,12 +31,17 @@ const Login = () => {
           value={password}
           className="w-full p-2 mb-4 border border-gray-300 rounded"
         />
-        <button
-          disabled={isLoading}
-          className="py-3 px-6 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50"
-        >
-          Log in
-        </button>
+        {!isLoading ? (
+          <button
+            className="py-3 px-6 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+          >
+            Log in
+          </button>
+        ) : (
+          <div className="flex justify-center">
+            <div className="spinner"/>
+          </div>
+        )}
         {error && <div className="mt-4 text-red-500">{error}</div>}
       </form>
     </div>
