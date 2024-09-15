@@ -17,10 +17,13 @@ const Chat = () => {
   const [isNewMessage, setIsNewMessage] = useState(false);
   const messagesEndRef = useRef(null);
   const chatContainerRef = useRef(null);
+  const fetchMessagesCalled = useRef(false);
 
   useEffect(() => {
     const fetchMessages = async () => {
-      if (!user) return;
+      if (!user || fetchMessagesCalled.current) return;
+
+      fetchMessagesCalled.current = true;
 
       try {
         const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/messages`, {
@@ -91,12 +94,11 @@ const Chat = () => {
       enqueueSnackbar('You must be logged in', { variant: 'error' });
       return;
     }
-
+  
     if (!message) {
-      enqueueSnackbar('Message cannot be empty', { variant: 'error' });
       return;
     }
-
+  
     const socketMessageData = {
       content: message,
       user: {
@@ -104,26 +106,12 @@ const Chat = () => {
         username: user.username
       }
     };
-
+  
     try {
       socket.emit('sendMessage', socketMessageData);
       setMessage('');
-      try {
-        const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/messages`, {
-          headers: { 'Authorization': `Bearer ${user.token}` },
-        });
-        const data = await response.json();
-
-        if (response.ok) {
-          dispatch({ type: 'SET_MESSAGES', payload: data });
-        } else {
-          enqueueSnackbar('Failed to fetch messages', { variant: 'error' });
-        }
-      } catch (error) {
-        enqueueSnackbar('An error occurred while fetching messages', { variant: 'error' });
-      }
     } catch (error) {
-      console.log('Error sending message:', error); // Debugging statement
+      console.log('Error sending message:', error);
       enqueueSnackbar('An error occurred while sending the message', { variant: 'error' });
     }
   };

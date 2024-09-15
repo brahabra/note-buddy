@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNotesContext } from "../hooks/useNotesContext";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useSnackbar } from 'notistack';
@@ -16,10 +16,13 @@ const Home = () => {
   const [showModal, setShowModal] = useState(false);
   const [currentNote, setCurrentNote] = useState(null);
   const [filteredNotes, setFilteredNotes] = useState([]);
+  const fetchNotesCalled = useRef(false);
 
   useEffect(() => {
     const fetchNotes = async () => {
-      if (!user) return;
+      if (!user || fetchNotesCalled.current) return;
+
+      fetchNotesCalled.current = true;
 
       try {
         const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/notes`, {

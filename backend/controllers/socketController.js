@@ -12,18 +12,20 @@ const handleSocketConnection = (io) => {
     socket.on('sendMessage', async ({ content, user }) => {
       try {
         const message = await createMessageHelper({ content, user });
+        console.log('New message sent!')
         io.emit('receiveMessage', message);
       } catch (error) {
-        console.log('Error creating message:', error); // Debugging statement
+        console.log('Error creating message:', error);
       }
     });
 
     socket.on('likeMessage', async ({ messageId, userId }) => {
       try {
         const message = await toggleLikeMessage(messageId, userId);
+        console.log('Message disliked/liked!')
         io.emit('updateMessage', message);
       } catch (error) {
-        console.log('Error liking message:', error); // Debugging statement
+        console.log('Error liking message:', error);
       }
     });
 

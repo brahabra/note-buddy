@@ -23,7 +23,7 @@ const createMessage = async (req, res) => {
   }
 };
 
-// Helper function to create a message
+// Helper function to create a message, this will be used in the socket controller
 const createMessageHelper = async ({ content, user }) => {
   const messageData = { content, user }; // Ensure user is an ObjectId
   let message = await Message.create(messageData);
@@ -31,6 +31,7 @@ const createMessageHelper = async ({ content, user }) => {
   return message;
 };
 
+// Toggle like on a message, this will be used in the socket controller
 const toggleLikeMessage = async (messageId, userId) => {
   const message = await Message.findById(messageId);
 
