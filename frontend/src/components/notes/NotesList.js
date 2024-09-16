@@ -1,9 +1,6 @@
-import { useNotesContext } from '../hooks/useNotesContext';
 import NoteDetails from './NoteDetails';
 
 const NotesList = ({ filteredNotes, handleOpenModal }) => {
-  const { notes } = useNotesContext();
-
   const sortedNotes = filteredNotes.sort((a, b) => {
     if (a.pinned && !b.pinned) return -1;
     if (!a.pinned && b.pinned) return 1;

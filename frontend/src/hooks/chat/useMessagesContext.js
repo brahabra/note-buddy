@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { MessagesContext } from '../context/MessageContext';
+import { MessagesContext } from '../../context/MessageContext';
 
 export const useMessagesContext = () => {
   const context = useContext(MessagesContext);

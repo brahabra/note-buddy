@@ -1,76 +1,16 @@
 import { useState, useRef } from "react";
-import { useNotesContext } from "../hooks/useNotesContext";
-import { useAuthContext } from '../hooks/useAuthContext';
 import CloseIcon from "@mui/icons-material/Close";
-import { useSnackbar } from 'notistack';
+import useAddOrUpdateNote from '../../hooks/notes/useAddOrUpdateNote';
 
 const NoteModal = ({ onClose, note }) => {
-  const { dispatch } = useNotesContext();
-  const { user } = useAuthContext();
-  const { enqueueSnackbar } = useSnackbar();
   const modalRef = useRef(null);
-
   const [title, setTitle] = useState(note ? note.title : '');
   const [content, setContent] = useState(note ? note.content : '');
-  const [error, setError] = useState(null);
+  const { addOrUpdateNote, error } = useAddOrUpdateNote();
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-
-    if (!user) {
-      setError('You must be logged in');
-      enqueueSnackbar('You must be logged in', { variant: 'error' });
-      return;
-    }
-
-    if (!title && !content) {
-      setError('A note cannot be empty');
-      enqueueSnackbar('A note cannot be empty', { variant: 'error' });
-      return;
-    }
-
-    const noteData = { title, content };
-
-    if (note) {
-      noteData.pinned = note.pinned; // Preserve the pinned status
-    }
-
-    const method = note ? 'PATCH' : 'POST';
-    const url = note ? `${process.env.REACT_APP_BACKEND_URL}/api/notes/${note._id}` : `${process.env.REACT_APP_BACKEND_URL}/api/notes`;
-
-    const response = await fetch(url, {
-      method,
-      body: JSON.stringify(noteData),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${user.token}`
-      }
-    });
-
-    const json = await response.json();
-
-    if (!response.ok) {
-      setError(json.error);
-      enqueueSnackbar(json.error, { variant: 'error' });
-    } else {
-      setTitle('');
-      setContent('');
-      setError(null);
-      dispatch({ type: note ? 'UPDATE_NOTE' : 'CREATE_NOTE', payload: json });
-
-      const fetchNotes = async () => {
-        const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/notes`, {
-          headers: { 'Authorization': `Bearer ${user.token}` },
-        });
-        const notes = await response.json();
-        if (response.ok) {
-          dispatch({ type: 'SET_NOTES', payload: notes });
-        }
-      };
-      onClose();
-      await fetchNotes();
-      enqueueSnackbar(note ? 'Note updated successfully!' : 'Note added successfully!', { variant: 'success' });
-    }
+    addOrUpdateNote(note, title, content, onClose);
   };
 
   const handleClickOutside = (event) => {

@@ -1,5 +1,5 @@
 import { useAuthContext } from './useAuthContext'
-import { useNotesContext } from './useNotesContext'
+import { useNotesContext } from '../notes/useNotesContext'
 
 export const useLogout = () => {
   const { dispatch } = useAuthContext()

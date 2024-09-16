@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
-import { useLogout } from '../hooks/useLogout';
-import { useAuthContext } from '../hooks/useAuthContext';
+import { useLogout } from '../hooks/auth/useLogout';
+import { useAuthContext } from '../hooks/auth/useAuthContext';
 import HomeIcon from '@mui/icons-material/Home';
 import ChatIcon from '@mui/icons-material/Chat';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';

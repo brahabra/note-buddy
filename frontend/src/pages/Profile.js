@@ -1,4 +1,4 @@
-import { useAuthContext } from '../hooks/useAuthContext';
+import { useAuthContext } from '../hooks/auth/useAuthContext';
 import { format } from 'date-fns';
 
 const Profile = () => {
